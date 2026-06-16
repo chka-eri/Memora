@@ -1,24 +1,68 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import '../global.css';
+
+import React, { createContext, useContext } from 'react';
+import { View, useColorScheme, StatusBar } from 'react-native';
 import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { COLORS, ThemeColors } from '../constants/theme';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
+// ─── Theme Context ────────────────────────────────────────────────────────────
 
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+interface ThemeContextValue {
+  isDark: boolean;
+  c: ThemeColors;
+  colorScheme: 'dark' | 'light';
+}
+
+const ThemeContext = createContext<ThemeContextValue>({
+  isDark: true,
+  c: COLORS.dark,
+  colorScheme: 'dark',
+});
+
+export function useTheme(): ThemeContextValue {
+  return useContext(ThemeContext);
+}
+
+// ─── Root Layout ──────────────────────────────────────────────────────────────
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const scheme = useColorScheme();
+  const isDark = scheme !== 'light';
+  const c = isDark ? COLORS.dark : COLORS.light;
+
+  const themeValue: ThemeContextValue = {
+    isDark,
+    c,
+    colorScheme: isDark ? 'dark' : 'light',
+  };
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <ThemeContext.Provider value={themeValue}>
+      <GestureHandlerRootView className="flex-1" style={{ backgroundColor: c.bg }}>
+        <SafeAreaProvider>
+          <StatusBar
+            barStyle={isDark ? 'light-content' : 'dark-content'}
+            backgroundColor={c.bg}
+            translucent={false}
+          />
+
+          {/*
+           * NativeWind needs a root View to anchor dark-mode media queries.
+           * className="flex-1" lets it fill the screen.
+           */}
+          <View className="flex-1 bg-light-bg dark:bg-dark-bg">
+            <Stack
+              screenOptions={{
+                headerShown: false,
+                contentStyle: { backgroundColor: c.bg },
+                animation: 'ios_from_right',
+              }}
+            />
+          </View>
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
+    </ThemeContext.Provider>
   );
 }

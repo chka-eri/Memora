@@ -1,0 +1,36 @@
+export const Colors = {
+  dark: {
+    bg: '#09091A',
+    bgSecondary: '#0F0F25',
+    card: '#14142B',
+    surface: '#1C1C38',
+    border: '#2A2A52',
+    accent: '#7B61FF',
+    accentLight: '#9B81FF',
+    pink: '#FF6B9D',
+    gold: '#FFD166',
+    teal: '#00E5A0',
+    text: '#EEEEFF',
+    textSub: '#9090BB',
+    textMuted: '#55557A',
+    danger: '#FF4466',
+  },
+  light: {
+    bg: '#F0F0FF',
+    bgSecondary: '#E8E8FF',
+    card: '#FFFFFF',
+    surface: '#F5F5FF',
+    border: '#DDDDF8',
+    accent: '#6B52FF',
+    accentLight: '#8B72FF',
+    pink: '#FF5B8D',
+    gold: '#EDB950',
+    teal: '#00C9A8',
+    text: '#0A0A1B',
+    textSub: '#50507A',
+    textMuted: '#A0A0C0',
+    danger: '#FF2244',
+  },
+};
+
+export type ColorScheme = typeof Colors.dark;
